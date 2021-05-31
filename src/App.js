@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { fabric } from "fabric";
+import { v4 } from 'uuid';
 import "./App.css";
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.myRef = React.createRef();
     this.pointArray = [];
     this.lineArray = [];
     this.activeShape = false;
@@ -17,7 +17,6 @@ class App extends Component {
       preserveObjectStacking: true,
       width: 900,
       height: 900,
-      selection: true,
       defaultCursor: "default",
     });
     this.canvas.setBackgroundImage(
@@ -41,7 +40,7 @@ class App extends Component {
 
       "mouse:moving": (event) => {
         // var objType = event.target.get('type');
-        console.log(event.target);
+        // console.log(event.target);
         // var p = event.target;
         // this.polygon.points[p.name] = {
         //   x: p.getCenterPoint().x,
@@ -70,8 +69,7 @@ class App extends Component {
   }
 
   addPoint = (options) => {
-    const random = Math.floor(Math.random() * (999999 - 99 + 1)) + 99;
-    const id = new Date().getTime() + random;
+    const id = v4();
     const circle = new fabric.Circle({
       radius: 5,
       fill: "#ffffff",
@@ -79,7 +77,6 @@ class App extends Component {
       strokeWidth: 0.5,
       left: options.e.layerX / this.canvas.getZoom(),
       top: options.e.layerY / this.canvas.getZoom(),
-      // selectable: false,
       hasBorders: false,
       hasControls: false,
       originX: "center",
@@ -179,6 +176,7 @@ class App extends Component {
       fill: "red",
       opacity: 1,
       hasBorders: false,
+      objectCaching: false,
     });
     this.canvas.add(polygon);
     this.activeLine = null;
@@ -250,7 +248,6 @@ class App extends Component {
       poly.controls = poly.points.reduce(function (acc, point, index) {
         acc["p" + index] = new fabric.Control({
           positionHandler: (dim, finalMatrix, fabricObject) => {
-            // console.log(fabricObject);
             const x =
                 fabricObject.points[index].x - fabricObject.pathOffset.x,
               y = fabricObject.points[index].y - fabricObject.pathOffset.y;
